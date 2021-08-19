@@ -6,7 +6,7 @@
 /*   By: tguimara <tguimara@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/19 12:48:25 by tguimara          #+#    #+#             */
-/*   Updated: 2021/08/19 14:03:49 by tguimara         ###   ########.fr       */
+/*   Updated: 2021/08/19 15:54:45 by tguimara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,8 @@
 function to create a stack of given capacity. It initializes size of
 stack as 0
 */
+int count = 0;
+
 t_stack	*createStack(unsigned capacity)
 {
     t_stack *stack;
@@ -87,7 +89,9 @@ void	print_stacks(t_stack *a, t_stack *b)
 void	pa(t_stack *a, t_stack *b)
 {
 	int	item;
-
+	
+	count++;
+	
 	item = pop(b);
 	push(a, item);
 	printf("pa\n");
@@ -97,7 +101,9 @@ void	pa(t_stack *a, t_stack *b)
 void	pb(t_stack *a, t_stack *b)
 {
 	int	item;
-
+	
+	count++;
+	
 	item = pop(a);
 	push(b, item);
 	printf("pb\n");
@@ -107,7 +113,9 @@ void	pb(t_stack *a, t_stack *b)
 void	sa(t_stack *stack)
 {
 	int	temp;
-
+	
+	count++;
+	
 	temp = stack->array[stack->top];
 	stack->array[stack->top] = stack->array[stack->top - 1];
 	stack->array[stack->top - 1] = temp;
@@ -117,31 +125,66 @@ void	sa(t_stack *stack)
 void	sb(t_stack *stack)
 {
 	int	temp;
-
+	
+	count++;
+	
 	temp = stack->array[stack->top];
 	stack->array[stack->top] = stack->array[stack->top - 1];
 	stack->array[stack->top - 1] = temp;
 	printf("sb\n");
 }
 
+int	check_stack_a(t_stack *stack)
+{
+	int cur_pos;
+
+	cur_pos = stack->top;
+	while(cur_pos)
+	{
+		if (stack->array[cur_pos] > stack->array[cur_pos - 1])
+			return (0);
+		cur_pos--;
+	}
+	return (1);
+}
+
 void	sort(t_stack *a, t_stack *b)
 {
-	while (a->array[a->top] > a->array[a->top - 1] && a->top > 0)
+	/*
+	while (!check_stack)
+		OK insert code bellow
+		OK before making a pb, verify if remaing stack is not already ordered
+		if check_stack(rotate(a)) break;
+	*/
+	while (!check_stack_a(a))
 	{
-		sa(a);
-		print_stacks(a, b);
-		pb(a, b);
-		if ((b->top > 0) && (b->array[b->top] < b->array[b->top - 1]))
+		while (a->top > 0)
 		{
-			sb(b);
-			print_stacks(a, b);
+			if (a->array[a->top] > a->array[a->top - 1])
+			{
+				sa(a);
+				print_stacks(a, b);
+			}
+			if (check_stack_a(a))
+				break ;
+			pb(a, b);
+			if ((b->top > 0) && (b->array[b->top] < b->array[b->top - 1]))
+			{
+				sb(b);
+				print_stacks(a, b);
+			}
 		}
-	}
-
-	while (b->top > -1)
-	{
-		pa(a, b);
-		//print_stacks(a, b);		
+		while (b->top > -1)
+		{
+			if (b->array[b->top] < b->array[b->top - 1] && b->top)
+				sb(b);
+			pa(a, b);
+			if (a->array[a->top] > a->array[a->top - 1])
+			{
+				sa(a);	
+				print_stacks(a, b);		
+			}
+		}		
 	}
 }
 
@@ -156,10 +199,10 @@ int	main(int argc, char **argv)
 	b = createStack(argc - 1);
 	while(argc > 1)
 		push(a, ft_atoi(*(argv + argc-- - 1)));
-	print_stacks(a, b);
+	// print_stacks(a, b);
 	sort(a, b);
 	print_stacks(a, b);
-
+	printf("%d\n", count);
 
 	return (0);
 
