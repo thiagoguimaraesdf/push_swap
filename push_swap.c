@@ -6,7 +6,7 @@
 /*   By: tguimara <tguimara@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/19 12:48:25 by tguimara          #+#    #+#             */
-/*   Updated: 2021/08/19 16:56:03 by tguimara         ###   ########.fr       */
+/*   Updated: 2021/08/20 10:43:10 by tguimara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,7 +95,7 @@ void	pa(t_stack *a, t_stack *b)
 	item = pop(b);
 	push(a, item);
 	printf("pa\n");
-	print_stacks(a, b);
+	//print_stacks(a, b);
 }
 
 void	pb(t_stack *a, t_stack *b)
@@ -107,7 +107,7 @@ void	pb(t_stack *a, t_stack *b)
 	item = pop(a);
 	push(b, item);
 	printf("pb\n");
-	print_stacks(a, b);
+	//print_stacks(a, b);
 }
 
 void	sa(t_stack *stack)
@@ -134,16 +134,26 @@ void	sb(t_stack *stack)
 	printf("sb\n");
 }
 
-void	ra(t_stack *a)
+void	ss(t_stack *a, t_stack *b)
+{
+	sa(a);
+	sb(b);
+	count++;
+	printf("ss\n");		
+}
+
+void	rra(t_stack *a)
 {
 	int	cur_pos;
 	int last;
 	int cur;
-	
+
+	count++;
+
 	cur_pos = a->top;
 	while(cur_pos > -1)
 	{
-		if (cur_pos = a->top)
+		if (cur_pos == a->top)
 		{
 			last = a->array[cur_pos];
 			a->array[cur_pos] = a->array[0];
@@ -156,19 +166,21 @@ void	ra(t_stack *a)
 		}
 		cur_pos--;
 	}
-	printf("ra\n");
+	printf("rra\n");
 }
 
-void	rb(t_stack *b)
+void	rrb(t_stack *b)
 {
 	int	cur_pos;
 	int last;
 	int cur;
-	
+
+	count++;
+
 	cur_pos = b->top;
 	while(cur_pos > -1)
 	{
-		if (cur_pos = b->top)
+		if (cur_pos == b->top)
 		{
 			last = b->array[cur_pos];
 			b->array[cur_pos] = b->array[0];
@@ -181,23 +193,24 @@ void	rb(t_stack *b)
 		}
 		cur_pos--;
 	}
-	printf("rb\n");	
+	printf("rrb\n");	
 }
 
-void	rra(t_stack *a)
+void	ra(t_stack *a)
 {
 	int	cur_pos;
 	int last;
 	int cur;
-	
+
+	count++;
+
 	cur_pos = 0;
-	while(cur_pos <= a->top)
+	while (cur_pos <= a->top)
 	{
-		if (cur_pos = 0)
+		if (cur_pos == 0)
 		{
 			last = a->array[cur_pos];
 			a->array[cur_pos] = a->array[a->top];	
-
 		}
 		else
 		{
@@ -205,21 +218,23 @@ void	rra(t_stack *a)
 			a->array[cur_pos] = last;
 			last = cur;
 		}
-		cur_pos++;
+		cur_pos++;		
 	}
-	printf("rra\n");	
+	printf("ra\n");	
 }
 
-void	rrb(t_stack *b)
+void	rb(t_stack *b)
 {
 	int	cur_pos;
 	int last;
 	int cur;
-	
+
+	count++;
+
 	cur_pos = 0;
 	while(cur_pos <= b->top)
 	{
-		if (cur_pos = 0)
+		if (cur_pos == 0)
 		{
 			last = b->array[cur_pos];
 			b->array[cur_pos] = b->array[b->top];	
@@ -233,7 +248,7 @@ void	rrb(t_stack *b)
 		}
 		cur_pos++;
 	}
-	printf("rrb\n");		
+	printf("rb\n");		
 }
 
 
@@ -284,40 +299,81 @@ int	count_smaller(t_stack *stack)
 	return (res);
 }
 
+void	verify_and_rotate(t_stack *a, t_stack *b)
+{
+	if (a->array[a->top] > a->array[0])
+	{
+		if (count_greater(a) > count_smaller(a))
+			ra(a);
+		else if (count_greater(a) == count_smaller(a))
+		{
+			if (a->capacity < 5)
+				ra(a);
+			else
+				rra(a);
+		}
+		else
+			rra(a);
+		//print_stacks(a, b);
+	}
+
+	if (b->array[a->top] < b->array[0])
+	{
+		if (count_greater(b) > count_smaller(b))
+			rb(b);
+		else if (count_greater(b) == count_smaller(b))
+		{
+			if (b->capacity < 5)
+				rb(b);
+			else
+				rrb(b);
+		}
+		else
+			rrb(b);
+	}
+}
+
 void	sort(t_stack *a, t_stack *b)
 {
 	/*
-	while (!check_stack)
-		OK insert code bellow
-		OK before making a pb, verify if remaing stack is not already ordered
-		if check_stack(rotate(a)) break;
-		if (stack[0] > stack [top])
-			decide_rot_rev
-				x = how many items after stack[0] are greater than stack[0]?
-				y = how many items before stack[top] are smaller than stack[top]?
-				if x > y
-					reverse rotate
-				else
-					rotate			
+	
 	*/
 	while (!check_stack_a(a))
 	{
+		/*
+			Swap to order and push items from 'a' to 'b'.
+			When a item gets to 'b', swap if necessary
+			Stop when stack 'a' is ordered
+			TO DO:
+			- sb and sa can come in some op if both conditions are satisfied
+		
+		*/
 		while (a->top > 0)
 		{
+			verify_and_rotate(a, b);
 			if (a->array[a->top] > a->array[a->top - 1])
 			{
+				if ((b->top > 0) && (b->array[b->top] < b->array[b->top - 1]))
+					ss(a, b);
 				sa(a);
-				print_stacks(a, b);
+				//print_stacks(a, b);
 			}
 			if (check_stack_a(a))
 				break ;
 			pb(a, b);
+			verify_and_rotate(a, b);
 			if ((b->top > 0) && (b->array[b->top] < b->array[b->top - 1]))
 			{
+				if (a->array[a->top] > a->array[a->top - 1])
+					ss(a, b)
 				sb(b);
-				print_stacks(a, b);
+				//print_stacks(a, b);
 			}
 		}
+		/*
+			Swap to order and push items from 'b' to 'a'.
+			When 'a' item gets to 'a', swap if necessary
+		*/
 		while (b->top > -1)
 		{
 			if (b->array[b->top] < b->array[b->top - 1] && b->top)
@@ -326,7 +382,7 @@ void	sort(t_stack *a, t_stack *b)
 			if (a->array[a->top] > a->array[a->top - 1])
 			{
 				sa(a);	
-				print_stacks(a, b);		
+				//print_stacks(a, b);		
 			}
 		}		
 	}
@@ -343,10 +399,10 @@ int	main(int argc, char **argv)
 	b = createStack(argc - 1);
 	while(argc > 1)
 		push(a, ft_atoi(*(argv + argc-- - 1)));
-	// print_stacks(a, b);
+	//print_stacks(a, b);
 	sort(a, b);
-	print_stacks(a, b);
-	printf("%d\n", count);
+	//print_stacks(a, b);
+	// printf("%d\n", count);
 
 	return (0);
 
