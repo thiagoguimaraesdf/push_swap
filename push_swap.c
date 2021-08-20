@@ -6,12 +6,11 @@
 /*   By: tguimara <tguimara@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/19 12:48:25 by tguimara          #+#    #+#             */
-/*   Updated: 2021/08/20 10:43:10 by tguimara         ###   ########.fr       */
+/*   Updated: 2021/08/20 16:00:53 by tguimara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <stdlib.h>
-#include <limits.h>
 #include "push_swap.h"
 
 /* 
@@ -333,7 +332,7 @@ void	verify_and_rotate(t_stack *a, t_stack *b)
 	}
 }
 
-void	sort(t_stack *a, t_stack *b)
+void	my_sort(t_stack *a, t_stack *b)
 {
 	/*
 	
@@ -365,7 +364,7 @@ void	sort(t_stack *a, t_stack *b)
 			if ((b->top > 0) && (b->array[b->top] < b->array[b->top - 1]))
 			{
 				if (a->array[a->top] > a->array[a->top - 1])
-					ss(a, b)
+					ss(a, b);
 				sb(b);
 				//print_stacks(a, b);
 			}
@@ -388,22 +387,134 @@ void	sort(t_stack *a, t_stack *b)
 	}
 }
 
+
+void	radix_sort(t_stack *a, t_stack *b)
+{
+	int size;
+	int max_num; // the biggest number in a is stack_size - 1
+	int max_bits; // how many bits for max_num 
+
+	size = a->top;
+	max_num = a->capacity - 1;
+	max_bits = 0;
+	while ((max_num >> max_bits) != 0) 
+		++max_bits;
+	for (int i = 0 ; i < max_bits ; ++i) // repeat for max_bits times
+	{
+		for(int j = 0 ; j < size ; ++j)
+		{
+			int num = a->array[a->top]; // top number of A
+			if ((num >> i)&1 == 1) 
+				ra(a); 
+			// if the (i + 1)-th bit is 1, leave in stack a
+			else 
+				pb(a, b);
+			// otherwise push to stack b
+		}
+		// put into boxes done
+		while (!isEmpty(b)) 
+			pa(a, b); // while stack b is not empty, do pa
+		// connect numbers done
+	}
+}
+
+int verify_duplicates(int capacity, int item)
+{
+	static int 	*duplicates_check;
+	int 		i;
+	
+	if (!duplicates_check)
+		duplicates_check = (int *)malloc(sizeof(int) * capacity);
+	i = 0;
+	while(*(duplicates_check + i))
+	{
+		if (item == *(duplicates_check + i))		
+			return (1);
+		i++;
+	}	
+	if (i < capacity)
+		*(duplicates_check + i) = item;
+	return (0);
+}
+
+int 	get_index(t_stack *index, int value)
+{
+	int	i;
+
+	i = 0;
+	while (i <= index->top)
+	{
+		// printf("i:%d\tindex[i]:%d\tvalue:%d\n", i, index->array[i], value);		
+		if (index->array[i] == value)
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+void	convert_numbers(t_stack *a)
+{
+	t_stack	*index;
+	int 	i;
+
+	index = createStack(a->capacity);
+	i = 0;
+	while (i <= a->top)
+	{
+		index->array[i] = a->array[i];
+		index->top++;
+		i++;
+	}
+	quickSort(index->array, 0 , index->top);
+	i = 0;
+	while (i <= a->top)
+	{
+		// printf("ai:%d\n", a->array[i]);
+		a->array[i] = get_index(index, a->array[i]);
+		i++;
+	}
+}
+
+
 int	main(int argc, char **argv)
 {
 	t_stack	*a;
 	t_stack	*b;
+	int 	error;
+
+
+	error = 0;
 	
 	if (argc < 2)
 		return (-1);
 	a = createStack(argc - 1);
 	b = createStack(argc - 1);
+	/*
+		verify numbers and push to stack 'a'
+	*/
 	while(argc > 1)
+	{
+		if (ft_atoi(*(argv + argc - 1)) == INT_MIN)
+		{
+			printf("Error\n");
+			return (-1);	
+		}
 		push(a, ft_atoi(*(argv + argc-- - 1)));
-	//print_stacks(a, b);
-	sort(a, b);
-	//print_stacks(a, b);
-	// printf("%d\n", count);
-
+		if (verify_duplicates(a->capacity, a->array[a->top]))
+		{
+			printf("Error\n");
+			return (-1);
+		}
+	}
+	/*
+		convert number to positive
+	*/
+	convert_numbers(a);
+	// print_stacks(a, b);
+	radix_sort(a, b);
+	// print_stacks(a, b);
+	// printf("count:%d\n", count);
+	
 	return (0);
 
 	

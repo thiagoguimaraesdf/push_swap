@@ -6,7 +6,7 @@
 /*   By: tguimara <tguimara@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/19 13:08:51 by tguimara          #+#    #+#             */
-/*   Updated: 2021/08/19 17:40:10 by tguimara         ###   ########.fr       */
+/*   Updated: 2021/08/20 11:28:27 by tguimara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,8 @@ int	ft_atoi(const char *str)
 		res = res * 10 + (*str - 48);
 		str++;
 	}
+	if (!ft_isdigit(*str) && *str != '\0')
+		return (INT_MIN);
 	if (res > 2147483647L && sign == 1)
 		return (-1);
 	if (res > 2147483648L && sign == -1)
