@@ -1,23 +1,30 @@
 NAME = push_swap
 
-SRC = push_swap.c ft_atoi.c quicksort.c
+SRC = push_swap.c quicksort.c radixsort.c mysort.c \
+stack_operations.c stack_utils.c stack_utils_2.c convert_number.c
 
 OBJ = $(SRC:.c=.o)
 
-CC = gcc
+CC = gcc -Wall -Werror -Wextra
 
 FLAGS = 
 
-all:	$(OBJ)
-	$(CC) $(OBJ) -o $(NAME)
+all:	$(NAME) 
+
+$(NAME):	$(OBJ)
+	@$(MAKE) -C libft
+	@$(CC) $(OBJ) -o $(NAME) -L./libft -lft -I./libft/include
 
 clean:
-	rm -rf $(OBJ)
+	@$(MAKE) clean -C ./libft
+	@rm -rf $(OBJ)
 
 fclean:	clean
-	rm -rf $(NAME)
+	@$(MAKE) fclean -C ./libft
+	@rm -rf $(NAME)
 
 re:	fclean all
 
 run: all
 	./$(NAME) $(ARGS)
+

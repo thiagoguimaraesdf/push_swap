@@ -6,56 +6,51 @@
 /*   By: tguimara <tguimara@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/20 14:48:51 by tguimara          #+#    #+#             */
-/*   Updated: 2021/08/20 14:52:56 by tguimara         ###   ########.fr       */
+/*   Updated: 2021/08/30 14:32:39 by tguimara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-// A utility function to swap two elements 
-static void	swap(int* a, int* b) 
-{ 
-    int t = *a; 
-    *a = *b; 
-    *b = t; 
-} 
-  
-/* This function takes last element as pivot, places 
-the pivot element at its correct position in sorted 
-array, and places all smaller (smaller than pivot) 
-to left of pivot and all greater elements to right 
-of pivot */
-static int	partition (int arr[], int low, int high) 
-{ 
-    int pivot = arr[high]; // pivot 
-    int i = (low - 1); // Index of smaller element and indicates the right position of pivot found so far
-  
-    for (int j = low; j <= high - 1; j++) 
-    { 
-        // If current element is smaller than the pivot 
-        if (arr[j] < pivot) 
-        { 
-            i++; // increment index of smaller element 
-            swap(&arr[i], &arr[j]); 
-        } 
-    } 
-    swap(&arr[i + 1], &arr[high]); 
-    return (i + 1); 
-} 
-  
-/* The main function that implements QuickSort 
-arr[] --> Array to be sorted, 
-low --> Starting index, 
-high --> Ending index */
-void	quickSort(int arr[], int low, int high) 
-{ 
-    if (low < high) 
-    { 
-        /* pi is partitioning index, arr[p] is now 
-        at right place */
-        int pi = partition(arr, low, high); 
-  
-        // Separately sort elements before 
-        // partition and after partition 
-        quickSort(arr, low, pi - 1); 
-        quickSort(arr, pi + 1, high); 
-    } 
-} 
+#include "push_swap.h"
+
+static void	swap(int *a, int *b)
+{
+	int	t;
+
+	t = *a;
+	*a = *b;
+	*b = t;
+}
+
+static int	partition(int *arr, int low, int high)
+{
+	int	pivot;
+	int	i;
+	int	j;
+
+	pivot = arr[high];
+	i = (low - 1);
+	j = low;
+	while (j <= high - 1)
+	{
+		if (arr[j] < pivot)
+		{
+			i++;
+			swap(&arr[i], &arr[j]);
+		}
+		j++;
+	}
+	swap(&arr[i + 1], &arr[high]);
+	return (i + 1);
+}
+
+void	quickSort(int *arr, int low, int high)
+{
+	int	pi;
+
+	if (low < high)
+	{
+		pi = partition(arr, low, high);
+		quickSort(arr, low, pi - 1);
+		quickSort(arr, pi + 1, high);
+	}
+}

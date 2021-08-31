@@ -5,20 +5,14 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: tguimara <tguimara@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/08/19 13:08:51 by tguimara          #+#    #+#             */
-/*   Updated: 2021/08/20 11:28:27 by tguimara         ###   ########.fr       */
+/*   Created: 2021/05/21 14:34:42 by tguimara          #+#    #+#             */
+/*   Updated: 2021/08/30 15:50:06 by tguimara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include <string.h>
-#include "push_swap.h"
-
-static int	ft_isdigit(int c)
-{
-	if ((c >= '0' && c <= '9'))
-		return (1);
-	return (0);
-}
+#include <limits.h>
+#include "../include/libft.h"
 
 static int	ft_check_char(char c)
 {
@@ -26,6 +20,16 @@ static int	ft_check_char(char c)
 		|| c == '\f' || c == '\r')
 		return (1);
 	return (0);
+}
+
+static void	ft_check_sign(int *sign, const char *str)
+{
+	if (*str == '-' || *str == '+')
+	{
+		if (*str == '-')
+			*sign = *sign * (-1);
+		str++;
+	}
 }
 
 int	ft_atoi(const char *str)
@@ -37,12 +41,7 @@ int	ft_atoi(const char *str)
 	sign = 1;
 	while (ft_check_char(*str) == 1)
 		str++;
-	if (*str == '-' || *str == '+')
-	{
-		if (*str == '-')
-			sign *= -1;
-		str++;
-	}
+	ft_check_sign(&sign, str);
 	while (ft_isdigit(*str))
 	{
 		res = res * 10 + (*str - 48);
