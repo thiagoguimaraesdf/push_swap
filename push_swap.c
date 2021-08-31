@@ -6,11 +6,35 @@
 /*   By: tguimara <tguimara@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/19 12:48:25 by tguimara          #+#    #+#             */
-/*   Updated: 2021/08/31 14:38:24 by tguimara         ###   ########.fr       */
+/*   Updated: 2021/08/31 15:20:45 by tguimara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+
+static void	free_stacks(t_stack *a, t_stack *b)
+{
+	if (a && a->array)
+	{
+		free(a->array);
+		a->array = NULL;
+	}
+	if (a)
+	{
+		free(a);
+		a = NULL;
+	}
+	if (b && b->array)
+	{
+		free(b->array);
+		b->array = NULL;
+	}
+	if (b)
+	{
+		free(b);
+		b = NULL;
+	}
+}
 
 static int	verify_duplicates(int capacity, int item)
 {
@@ -23,11 +47,17 @@ static int	verify_duplicates(int capacity, int item)
 	while (*(duplicates_check + i))
 	{
 		if (item == *(duplicates_check + i))
+		{
+			free(duplicates_check);
+			duplicates_check = NULL;
 			return (1);
+		}
 		i++;
 	}	
 	if (i < capacity)
 		*(duplicates_check + i) = item;
+	free(duplicates_check);
+	duplicates_check = NULL;
 	return (0);
 }
 
@@ -37,13 +67,13 @@ static int	read_args(int argc, char **argv, t_stack *a)
 	{
 		if (ft_atoi(*(argv + argc - 1)) == INT_MIN)
 		{
-			ft_printf("Error\n");
+			write(2, "Error\n", 7);
 			return (-1);
 		}
 		push(a, ft_atoi(*(argv + argc-- - 1)) + 1);
 		if (verify_duplicates(a->capacity, a->array[a->top]))
 		{
-			ft_printf("Error\n");
+			write(2, "Error\n", 7);
 			return (-1);
 		}
 	}
@@ -68,5 +98,6 @@ int	main(int argc, char **argv)
 		radixSort(a, b);
 	else
 		mySort(a, b);
+	free_stacks(a, b);
 	return (0);
 }

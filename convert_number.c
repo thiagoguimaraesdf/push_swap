@@ -6,7 +6,7 @@
 /*   By: tguimara <tguimara@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/08/30 10:29:02 by tguimara          #+#    #+#             */
-/*   Updated: 2021/08/30 16:01:21 by tguimara         ###   ########.fr       */
+/*   Updated: 2021/08/31 15:19:50 by tguimara         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,4 +46,8 @@ void	convert_numbers(t_stack *a)
 		a->array[i] = get_index(index, a->array[i]);
 		i++;
 	}
+	if (index && index->array)
+		free(index->array);
+	if (index)
+		free(index);
 }
