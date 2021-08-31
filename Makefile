@@ -5,7 +5,7 @@ stack_operations.c stack_utils.c stack_utils_2.c convert_number.c
 
 OBJ = $(SRC:.c=.o)
 
-CC = gcc -Wall -Werror -Wextra
+CC = gcc -Wall -Werror -Wextra -g -fsanitize=address -static-libasan
 
 FLAGS = 
 
